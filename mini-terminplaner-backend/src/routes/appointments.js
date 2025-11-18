@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Appointment = require('../models/Appointment');
-const { appointmentValidation, handleValidation } = require('../validators');
+
+import Appointment from '../models/Appointment.js';
+import { appointmentValidation, handleValidation } from '../validators.js';
 
 // Create
 router.post('/', appointmentValidation, handleValidation, async (req, res) => {
@@ -45,7 +46,11 @@ router.get('/:id', async (req, res) => {
 // Update
 router.put('/:id', appointmentValidation, handleValidation, async (req, res) => {
   try {
-    const updated = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updated = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
     if (!updated) return res.status(404).json({ message: "Nicht gefunden" });
     res.json(updated);
   } catch (err) {
@@ -64,4 +69,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

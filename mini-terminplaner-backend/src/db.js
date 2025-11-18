@@ -1,11 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const connect = async (uri) => {
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  console.log(" MongoDB erfolgreich verbunden");
+export const connect = async (uri) => {
+  await mongoose.connect(uri);
+  console.log("MongoDB erfolgreich verbunden");
 };
-
-module.exports = { connect };
