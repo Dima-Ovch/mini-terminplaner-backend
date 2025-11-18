@@ -1,72 +1,28 @@
 import express from 'express';
 const router = express.Router();
 
-import Appointment from '../models/Appointment.js';
 import { appointmentValidation, handleValidation } from '../validators.js';
+import {
+  createAppointment,
+  getAppointments,
+  getAppointmentById,
+  updateAppointment,
+  deleteAppointment
+} from '../controllers/appointment.controller.js';
 
 // Create
-router.post('/', appointmentValidation, handleValidation, async (req, res) => {
-  try {
-    const appt = new Appointment(req.body);
-    await appt.save();
-    res.status(201).json(appt);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.post('/', appointmentValidation, handleValidation, createAppointment);
 
 // Read all (optional ?future=true)
-router.get('/', async (req, res) => {
-  try {
-    const { future } = req.query;
-
-    let query = {};
-    if (future === "true") {
-      query = { date: { $gte: new Date() } };
-    }
-
-    const list = await Appointment.find(query).sort({ date: 1 });
-    res.json(list);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.get('/', getAppointments);
 
 // Read single
-router.get('/:id', async (req, res) => {
-  try {
-    const appt = await Appointment.findById(req.params.id);
-    if (!appt) return res.status(404).json({ message: "Nicht gefunden" });
-    res.json(appt);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.get('/:id', getAppointmentById);
 
 // Update
-router.put('/:id', appointmentValidation, handleValidation, async (req, res) => {
-  try {
-    const updated = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updated) return res.status(404).json({ message: "Nicht gefunden" });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.put('/:id', appointmentValidation, handleValidation, updateAppointment);
 
 // Delete
-router.delete('/:id', async (req, res) => {
-  try {
-    const deleted = await Appointment.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Nicht gefunden" });
-    res.json({ message: "Gelöscht" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+router.delete('/:id', deleteAppointment);
 
 export default router;
